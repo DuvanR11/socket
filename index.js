@@ -1,10 +1,13 @@
-const io = require("socket.io")(8800, {
-    cors: {
-      origin: "*",
-    },
-  });
-  
+const app = require("express")();
+const httpServer = require("http").createServer(app);
+const io = require("socket.io")(httpServer, {
+  cors: {
+    origin: "*",
+  },
+});
+
   let activeUsers = [];
+
   
   io.on("connection", (socket) => {
     // add new User
@@ -36,4 +39,10 @@ const io = require("socket.io")(8800, {
         io.to(user.socketId).emit("recieve-message", data);
       }
     });
+  });
+
+
+  const PORT = process.env.PORT || 8800;
+  httpServer.listen(PORT, () => {
+    console.log(`WebSocket server listening on port ${PORT}`);
   });
